@@ -1,5 +1,14 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Dimensions,
+} from "react-native";
+
+const { windowWidth, windowHeight } = Dimensions.get("screen");
 
 export default function HomeScreen({ navigation }) {
   return (
@@ -38,8 +47,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   logo: {
-    width: 200,
-    height: 200,
+    width: 250,
+    height: 250,
+    marginBottom: 20,
   },
   button: {
     backgroundColor: "#C62E2E",
