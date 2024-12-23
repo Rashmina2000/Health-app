@@ -1,11 +1,14 @@
-// HomeScreen.js
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 
 export default function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome to ModernApp</Text>
+      <Image
+        source={require("../../assets/Health-logo.png")}
+        style={styles.logo}
+      />
+      <Text style={styles.title}>Welcome to Health App</Text>
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("Register")}
@@ -27,12 +30,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#fff",
   },
   title: {
     fontSize: 24,
     fontWeight: "700",
     marginBottom: 20,
+  },
+  logo: {
+    width: 200,
+    height: 200,
   },
   button: {
     backgroundColor: "#C62E2E",
