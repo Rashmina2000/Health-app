@@ -1,12 +1,39 @@
-import React, { useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import {
   View,
   Text,
   StyleSheet,
   FlatList,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 import axios from "axios";
+
+const ClickContext = createContext();
+
+// Provider component to wrap the app and provide context
+const ClickProvider = ({ children }) => {
+  const [clickCount, setClickCount] = useState(0);
+
+  const incrementCount = () => setClickCount(clickCount + 1);
+
+  return (
+    <ClickContext.Provider value={{ clickCount, incrementCount }}>
+      {children}
+    </ClickContext.Provider>
+  );
+};
+
+const FloatingButton = () => {
+  const { clickCount } = useContext(ClickContext);
+  const { incrementCount } = useContext(ClickContext);
+
+  return (
+    <TouchableOpacity style={styles.floatingButton} onPress={incrementCount}>
+      <Text style={styles.floatingButtonText}>{clickCount}</Text>
+    </TouchableOpacity>
+  );
+};
 
 export default function HomeScreen({ route }) {
   const { username } = route.params;
@@ -40,6 +67,9 @@ export default function HomeScreen({ route }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Hello, {username}!</Text>
+      <ClickProvider>
+        <FloatingButton />
+      </ClickProvider>
       {loading ? (
         <ActivityIndicator size="large" color="#C62E2E" />
       ) : (
@@ -88,5 +118,27 @@ const styles = StyleSheet.create({
   cardDescription: {
     fontSize: 14,
     color: "#555",
+  },
+  floatingButton: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+    backgroundColor: "#C62E2E",
+    borderRadius: 40,
+    width: 80,
+    height: 80,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
+    elevation: 5,
+    zIndex: 4,
+  },
+  floatingButtonText: {
+    color: "#fff",
+    fontSize: 30,
+    fontWeight: "bold",
   },
 });
