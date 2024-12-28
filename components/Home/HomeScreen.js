@@ -1,35 +1,55 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
   StyleSheet,
-  Image,
-  Dimensions,
+  FlatList,
+  ActivityIndicator,
 } from "react-native";
+import axios from "axios";
 
-const { windowWidth, windowHeight } = Dimensions.get("screen");
+export default function HomeScreen({ route }) {
+  const { username } = route.params;
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-export default function HomeScreen({ navigation }) {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "https://www.hpb.health.gov.lk/api/get-current-statistical"
+        );
+        setData(response.data.data.daily_pcr_testing_data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const renderItem = ({ item }) => (
+    <View style={styles.card}>
+      <Text style={styles.cardTitle}>Date: {item.date}</Text>
+      <Text style={styles.cardDescription}>PCR Count: {item.pcr_count}</Text>
+    </View>
+  );
+
   return (
     <View style={styles.container}>
-      <Image
-        source={require("../../assets/Health-logo.png")}
-        style={styles.logo}
-      />
-      <Text style={styles.title}>Welcome to Health App</Text>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("Register")}
-      >
-        <Text style={styles.buttonText}>Register</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("Login")}
-      >
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
+      <Text style={styles.title}>Hello, {username}!</Text>
+      {loading ? (
+        <ActivityIndicator size="large" color="#C62E2E" />
+      ) : (
+        <FlatList
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => index.toString()}
+          contentContainerStyle={styles.list}
+        />
+      )}
     </View>
   );
 }
@@ -37,30 +57,36 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#f5f5f5",
+    padding: 20,
   },
   title: {
     fontSize: 24,
     fontWeight: "700",
     marginBottom: 20,
+    textAlign: "center",
   },
-  logo: {
-    width: 250,
-    height: 250,
-    marginBottom: 20,
+  list: {
+    paddingBottom: 20,
   },
-  button: {
-    backgroundColor: "#C62E2E",
-    padding: 15,
+  card: {
+    backgroundColor: "#ffffff",
     borderRadius: 10,
-    marginVertical: 10,
-    width: "80%",
-    alignItems: "center",
+    padding: 15,
+    marginBottom: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 3,
   },
-  buttonText: {
-    color: "#ffffff",
-    fontSize: 16,
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    marginBottom: 5,
+  },
+  cardDescription: {
+    fontSize: 14,
+    color: "#555",
   },
 });

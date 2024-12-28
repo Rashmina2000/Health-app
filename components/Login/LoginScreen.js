@@ -13,7 +13,9 @@ export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {};
+  const handleLogin = () => {
+    navigation.navigate("Home", { username });
+  };
 
   return (
     <View style={styles.container}>
