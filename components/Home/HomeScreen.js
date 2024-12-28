@@ -11,7 +11,6 @@ import axios from "axios";
 
 const ClickContext = createContext();
 
-// Provider component to wrap the app and provide context
 const ClickProvider = ({ children }) => {
   const [clickCount, setClickCount] = useState(0);
 

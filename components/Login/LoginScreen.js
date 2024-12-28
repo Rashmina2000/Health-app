@@ -1,4 +1,3 @@
-// LoginScreen.js
 import React, { useState } from "react";
 import {
   View,
@@ -6,33 +5,68 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
 } from "react-native";
 
 export default function LoginScreen({ navigation }) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
+
+  const [formErrors, setFormErrors] = useState({
+    username: "",
+    password: "",
+  });
+
+  const validate = () => {
+    let errors = {};
+
+    // Username validation
+    if (!formData.username.trim()) {
+      errors.username = "Username is required";
+    }
+
+    // Password validation
+    if (!formData.password.trim()) {
+      errors.password = "Password is required";
+    }
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleInputChange = (field, value) => {
+    setFormData({ ...formData, [field]: value });
+    setFormErrors({ ...formErrors, [field]: "" }); // Clear error when user starts typing
+  };
 
   const handleLogin = () => {
-    navigation.navigate("Home", { username });
+    if (validate()) {
+      navigation.navigate("Home", { username: formData.username });
+    }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Login</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, formErrors.username ? styles.inputError : null]}
         placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
+        //value={username}
+        onChangeText={(value) => handleInputChange("username", value)}
       />
+      {formErrors.username ? (
+        <Text style={styles.errorText}>{formErrors.username}</Text>
+      ) : null}
       <TextInput
-        style={styles.input}
+        style={[styles.input, formErrors.password ? styles.inputError : null]}
         placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
+        //value={password}
+        onChangeText={(value) => handleInputChange("password", value)}
         secureTextEntry
       />
+      {formErrors.password ? (
+        <Text style={styles.errorText}>{formErrors.password}</Text>
+      ) : null}
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
@@ -60,6 +94,16 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderWidth: 1,
     borderColor: "#dddddd",
+  },
+  inputError: {
+    borderColor: "#ff0000",
+  },
+  errorText: {
+    color: "#ff0000",
+    fontSize: 12,
+    marginBottom: 10,
+    alignSelf: "flex-start",
+    marginLeft: "10%",
   },
   button: {
     backgroundColor: "#C62E2E",
